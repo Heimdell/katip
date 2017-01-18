@@ -638,9 +638,11 @@ instance (Katip m) => Katip (ResourceT m) where
 -------------------------------------------------------------------------------
 -- | A concrete monad you can use to run logging actions.
 newtype KatipT m a = KatipT { unKatipT :: ReaderT LogEnv m a }
-  deriving ( Functor, Applicative, Monad, MonadIO
+  deriving ( Functor, Applicative, Monad
            , MonadMask, MonadCatch, MonadThrow, MonadTrans, MonadBase b)
 
+instance MonadIO m => MonadIO (KatipT m) where
+    liftIO = KatipT . liftIO
 
 instance MonadIO m => Katip (KatipT m) where
     getLogEnv = KatipT ask
